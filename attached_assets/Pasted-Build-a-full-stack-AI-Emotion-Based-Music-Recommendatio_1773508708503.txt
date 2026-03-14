@@ -1,0 +1,155 @@
+Build a full-stack AI Emotion-Based Music Recommendation System similar to Spotify.
+
+Frontend:
+React with TailwindCSS dark dark-mode UI like Spotify.
+
+Backend:
+Python FastAPI.
+
+Music source:
+Use YouTube Music search using the ytmusicapi Python library.
+
+The music must play directly inside the website using an embedded YouTube player or audio player.
+
+Main features:
+
+- Search songs
+- Play songs inside the website
+- Pause songs
+- Skip songs
+- Like songs
+- Create playlists
+- Show recently played songs
+- View listening history
+- Save history in database
+
+Recommendation logic:
+
+1. When a user searches for a song, detect the emotion of the song (happy, sad, angry, calm, excited) using simple keyword or genre mapping.
+
+2. If the user listens to the full song (90% or more), recommend similar songs from the same genre, artist, and emotion.
+
+3. If the user skips the song (less than 20%), avoid similar songs and recommend songs from a different emotion category.
+
+4. If the user listens halfway (30–60%) then skips, recommend songs with the same emotion but better similarity.
+
+User behavior tracking:
+
+Track:
+- play_time
+- song_duration
+- play_percentage
+
+Formula:
+play_percentage = play_time / duration
+
+Interpretation:
+0-20% = skip
+30-60% = partial like
+90-100% = full like
+
+Database:
+PostgreSQL.
+
+Tables:
+
+Users
+- id
+- username
+- email
+- password_hash
+- created_at
+
+Songs
+- id
+- title
+- artist
+- genre
+- emotion
+- youtube_id
+
+History
+- id
+- user_id
+- song_id
+- play_percentage
+- timestamp
+
+Playlists
+- id
+- user_id
+- playlist_name
+- created_at
+
+PlaylistSongs
+- playlist_id
+- song_id
+
+Recommendations
+- id
+- user_id
+- song_id
+- emotion
+- similarity_score
+
+Backend endpoints:
+
+POST /search
+Search songs using YouTube Music
+
+POST /play
+Start playback
+
+POST /progress
+Update play percentage
+
+POST /skip
+Mark song skipped
+
+POST /recommend
+Return recommended songs
+
+POST /playlist/create
+Create playlist
+
+POST /playlist/add
+Add song to playlist
+
+GET /history
+Return last 20 played songs
+
+UI design similar to Spotify:
+
+Layout:
+- left sidebar
+- main content area
+- bottom music player
+
+Sidebar buttons:
+Home
+Search
+Library
+Create Playlist
+Liked Songs
+
+Bottom music player:
+- album artwork
+- song title
+- artist
+- play button
+- pause button
+- next button
+- previous button
+- progress bar
+- volume control
+
+Dark minimal color palette:
+
+Background #121212
+Sidebar #000000
+Cards #181818
+Primary text #FFFFFF
+Secondary text #B3B3B3
+Accent #1DB954
+
+Generate the full project with working backend APIs, frontend UI, recommendation logic, playlist system, and listening history.

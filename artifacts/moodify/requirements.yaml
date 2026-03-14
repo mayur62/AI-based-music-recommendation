@@ -1,0 +1,18 @@
+packages:
+  "zustand": "Global state management for the music player"
+  "framer-motion": "Smooth page transitions and micro-interactions"
+  "react-youtube": "YouTube IFrame API wrapper for audio playback"
+  "date-fns": "Formatting durations and timestamps"
+
+images:
+  - path: "artifacts/moodify/public/images/hero-bg.png"
+    description: "Dark, moody abstract gradient mesh in Spotify green and deep black, subtle light leaks, high resolution, premium feel"
+    aspect_ratio: "16:9"
+  - path: "artifacts/moodify/public/images/logo.png"
+    description: "Minimalist modern music app logo icon, glowing green soundwave on black background"
+    aspect_ratio: "1:1"
+
+notes:
+  - API endpoints follow the provided OpenAPI schema and are accessed via @workspace/api-client-react
+  - Default userId 'default' is used across all requests
+  - Player state is synchronized with a hidden YouTube iframe via react-youtube

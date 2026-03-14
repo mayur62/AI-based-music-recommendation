@@ -3,13 +3,24 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Moodify - AI Emotion-Based Music Recommendation System API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: songs
+    description: Song search and playback
+  - name: history
+    description: Listening history
+  - name: playlists
+    description: Playlist management
+  - name: recommendations
+    description: AI music recommendations
+  - name: likes
+    description: Liked songs
+
 paths:
   /healthz:
     get:
@@ -24,6 +35,266 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /search:
+    post:
+      operationId: searchSongs
+      tags: [songs]
+      summary: Search for songs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SearchRequest"
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResponse"
+
+  /play:
+    post:
+      operationId: playSong
+      tags: [songs]
+      summary: Record song play start
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PlayRequest"
+      responses:
+        "200":
+          description: Play recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlayResponse"
+
+  /progress:
+    post:
+      operationId: updateProgress
+      tags: [songs]
+      summary: Update song play progress
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProgressRequest"
+      responses:
+        "200":
+          description: Progress updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProgressResponse"
+
+  /skip:
+    post:
+      operationId: skipSong
+      tags: [songs]
+      summary: Mark song as skipped
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SkipRequest"
+      responses:
+        "200":
+          description: Skip recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SkipResponse"
+
+  /recommend:
+    post:
+      operationId: getRecommendations
+      tags: [recommendations]
+      summary: Get AI-powered song recommendations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RecommendRequest"
+      responses:
+        "200":
+          description: Recommendations
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecommendResponse"
+
+  /history:
+    get:
+      operationId: getHistory
+      tags: [history]
+      summary: Get listening history
+      parameters:
+        - name: userId
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Listening history
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HistoryResponse"
+
+  /likes:
+    get:
+      operationId: getLikedSongs
+      tags: [likes]
+      summary: Get liked songs
+      parameters:
+        - name: userId
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Liked songs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LikedSongsResponse"
+
+  /likes/toggle:
+    post:
+      operationId: toggleLike
+      tags: [likes]
+      summary: Like or unlike a song
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ToggleLikeRequest"
+      responses:
+        "200":
+          description: Like toggled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ToggleLikeResponse"
+
+  /playlist/create:
+    post:
+      operationId: createPlaylist
+      tags: [playlists]
+      summary: Create a new playlist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePlaylistRequest"
+      responses:
+        "200":
+          description: Playlist created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlaylistResponse"
+
+  /playlist/add:
+    post:
+      operationId: addToPlaylist
+      tags: [playlists]
+      summary: Add song to playlist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddToPlaylistRequest"
+      responses:
+        "200":
+          description: Song added to playlist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AddToPlaylistResponse"
+
+  /playlists:
+    get:
+      operationId: getPlaylists
+      tags: [playlists]
+      summary: Get all playlists
+      parameters:
+        - name: userId
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: All playlists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlaylistsResponse"
+
+  /playlist/{playlistId}:
+    get:
+      operationId: getPlaylist
+      tags: [playlists]
+      summary: Get playlist songs
+      parameters:
+        - name: playlistId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Playlist with songs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlaylistDetailResponse"
+
+  /playlist/{playlistId}/remove:
+    post:
+      operationId: removeFromPlaylist
+      tags: [playlists]
+      summary: Remove song from playlist
+      parameters:
+        - name: playlistId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RemoveFromPlaylistRequest"
+      responses:
+        "200":
+          description: Song removed from playlist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RemoveFromPlaylistResponse"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +305,339 @@ components:
       required:
         - status
 
+    Song:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        artist:
+          type: string
+        genre:
+          type: string
+        emotion:
+          type: string
+        youtubeId:
+          type: string
+        thumbnail:
+          type: string
+        duration:
+          type: integer
+        isLiked:
+          type: boolean
+      required:
+        - title
+        - artist
+        - youtubeId
+
+    SearchRequest:
+      type: object
+      properties:
+        query:
+          type: string
+        userId:
+          type: string
+      required:
+        - query
+
+    SearchResponse:
+      type: object
+      properties:
+        songs:
+          type: array
+          items:
+            $ref: "#/components/schemas/Song"
+        query:
+          type: string
+      required:
+        - songs
+        - query
+
+    PlayRequest:
+      type: object
+      properties:
+        youtubeId:
+          type: string
+        title:
+          type: string
+        artist:
+          type: string
+        genre:
+          type: string
+        emotion:
+          type: string
+        thumbnail:
+          type: string
+        duration:
+          type: integer
+        userId:
+          type: string
+      required:
+        - youtubeId
+        - title
+        - artist
+
+    PlayResponse:
+      type: object
+      properties:
+        historyId:
+          type: integer
+        songId:
+          type: integer
+        message:
+          type: string
+      required:
+        - message
+
+    ProgressRequest:
+      type: object
+      properties:
+        historyId:
+          type: integer
+        playTime:
+          type: number
+        duration:
+          type: number
+        userId:
+          type: string
+      required:
+        - historyId
+        - playTime
+        - duration
+
+    ProgressResponse:
+      type: object
+      properties:
+        playPercentage:
+          type: number
+        message:
+          type: string
+      required:
+        - message
+
+    SkipRequest:
+      type: object
+      properties:
+        historyId:
+          type: integer
+        playTime:
+          type: number
+        duration:
+          type: number
+        userId:
+          type: string
+      required:
+        - historyId
+        - playTime
+        - duration
+
+    SkipResponse:
+      type: object
+      properties:
+        playPercentage:
+          type: number
+        message:
+          type: string
+      required:
+        - message
+
+    RecommendRequest:
+      type: object
+      properties:
+        youtubeId:
+          type: string
+        emotion:
+          type: string
+        genre:
+          type: string
+        artist:
+          type: string
+        playPercentage:
+          type: number
+        userId:
+          type: string
+      required:
+        - emotion
+
+    RecommendResponse:
+      type: object
+      properties:
+        songs:
+          type: array
+          items:
+            $ref: "#/components/schemas/Song"
+        reason:
+          type: string
+      required:
+        - songs
+        - reason
+
+    HistoryItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        song:
+          $ref: "#/components/schemas/Song"
+        playPercentage:
+          type: number
+        timestamp:
+          type: string
+      required:
+        - id
+        - song
+        - playPercentage
+        - timestamp
+
+    HistoryResponse:
+      type: object
+      properties:
+        history:
+          type: array
+          items:
+            $ref: "#/components/schemas/HistoryItem"
+      required:
+        - history
+
+    LikedSongsResponse:
+      type: object
+      properties:
+        songs:
+          type: array
+          items:
+            $ref: "#/components/schemas/Song"
+      required:
+        - songs
+
+    ToggleLikeRequest:
+      type: object
+      properties:
+        youtubeId:
+          type: string
+        title:
+          type: string
+        artist:
+          type: string
+        genre:
+          type: string
+        emotion:
+          type: string
+        thumbnail:
+          type: string
+        userId:
+          type: string
+      required:
+        - youtubeId
+        - title
+        - artist
+
+    ToggleLikeResponse:
+      type: object
+      properties:
+        liked:
+          type: boolean
+        message:
+          type: string
+      required:
+        - liked
+        - message
+
+    CreatePlaylistRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        userId:
+          type: string
+      required:
+        - name
+
+    PlaylistResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        userId:
+          type: string
+        createdAt:
+          type: string
+        songCount:
+          type: integer
+      required:
+        - id
+        - name
+
+    PlaylistsResponse:
+      type: object
+      properties:
+        playlists:
+          type: array
+          items:
+            $ref: "#/components/schemas/PlaylistResponse"
+      required:
+        - playlists
+
+    PlaylistDetailResponse:
+      type: object
+      properties:
+        playlist:
+          $ref: "#/components/schemas/PlaylistResponse"
+        songs:
+          type: array
+          items:
+            $ref: "#/components/schemas/Song"
+      required:
+        - playlist
+        - songs
+
+    AddToPlaylistRequest:
+      type: object
+      properties:
+        playlistId:
+          type: integer
+        youtubeId:
+          type: string
+        title:
+          type: string
+        artist:
+          type: string
+        genre:
+          type: string
+        emotion:
+          type: string
+        thumbnail:
+          type: string
+        userId:
+          type: string
+      required:
+        - playlistId
+        - youtubeId
+        - title
+        - artist
+
+    AddToPlaylistResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
+
+    RemoveFromPlaylistRequest:
+      type: object
+      properties:
+        youtubeId:
+          type: string
+      required:
+        - youtubeId
+
+    RemoveFromPlaylistResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message

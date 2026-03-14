@@ -3,6 +3,17 @@ import { useState } from "react";
 import { useSearchSongs } from "@workspace/api-client-react";
 import { SongCard } from "@/components/song-card";
 
+const MOOD_TAGS = [
+  { id: "happy", label: "😊 Happy", query: "happy upbeat songs" },
+  { id: "sad", label: "😢 Sad", query: "sad emotional songs" },
+  { id: "calm", label: "😌 Calm", query: "calm relaxing music" },
+  { id: "excited", label: "🔥 Excited", query: "energetic workout music" },
+  { id: "angry", label: "😤 Angry", query: "intense rock metal music" },
+  { id: "romantic", label: "💕 Romantic", query: "romantic love songs" },
+  { id: "focus", label: "🎯 Focus", query: "study concentration music" },
+  { id: "chill", label: "🧊 Chill", query: "chill vibes lofi" },
+];
+
 export default function Search() {
   const [query, setQuery] = useState("");
   const searchMutation = useSearchSongs();
@@ -13,11 +24,16 @@ export default function Search() {
     searchMutation.mutate({ data: { query, userId: "default" } });
   };
 
+  const handleMoodTag = (moodQuery: string) => {
+    setQuery(moodQuery);
+    searchMutation.mutate({ data: { query: moodQuery, userId: "default" } });
+  };
+
   const results = searchMutation.data?.songs || [];
 
   return (
     <div className="p-8 min-h-full bg-gradient-to-b from-secondary/30 to-background">
-      <div className="max-w-3xl mx-auto mb-10">
+      <div className="max-w-3xl mx-auto mb-8">
         <form onSubmit={handleSearch} className="relative group">
           <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-muted-foreground group-focus-within:text-foreground transition-colors" />
           <input
@@ -29,6 +45,24 @@ export default function Search() {
           />
         </form>
       </div>
+
+      {/* Mood Tags */}
+      {!searchMutation.isSuccess && (
+        <div className="max-w-3xl mx-auto mb-10">
+          <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-4">Browse by mood</h3>
+          <div className="flex flex-wrap gap-2">
+            {MOOD_TAGS.map(tag => (
+              <button
+                key={tag.id}
+                onClick={() => handleMoodTag(tag.query)}
+                className="px-4 py-2 rounded-full bg-secondary/80 hover:bg-secondary text-sm font-medium transition-all hover:scale-105 border border-border/50"
+              >
+                {tag.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {searchMutation.isPending && (
         <div className="flex flex-col items-center justify-center mt-20 text-muted-foreground">

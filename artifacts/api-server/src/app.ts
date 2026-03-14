@@ -1,13 +1,21 @@
-import express, { type Express } from "express";
-import cors from "cors";
-import router from "./routes";
+import express from "express";
 
-const app: Express = express();
+const app = express();
 
-app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-app.use("/api", router);
+// Home route
+app.get("/", (req, res) => {
+  res.json({
+    message: "AI Music Recommendation API is running 🚀",
+  });
+});
+
+// Health check route
+app.get("/healthz", (req, res) => {
+  res.json({
+    status: "ok",
+  });
+});
 
 export default app;

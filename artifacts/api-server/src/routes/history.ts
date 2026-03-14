@@ -40,7 +40,7 @@ router.get("/history", async (req, res) => {
           isLiked: likedIds.has(r.songs!.id),
         },
         playPercentage: r.history.playPercentage || 0,
-        timestamp: r.history.timestamp?.toISOString() || new Date().toISOString(),
+        timestamp: r.history.timestamp || new Date().toISOString(),
       }));
 
     res.json(GetHistoryResponse.parse({ history }));

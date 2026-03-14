@@ -27,7 +27,7 @@ router.get("/playlists", async (req, res) => {
         id: p.id,
         name: p.name,
         userId: p.userId,
-        createdAt: p.createdAt?.toISOString(),
+        createdAt: p.createdAt || new Date().toISOString(),
         songCount: Number(countResult?.count || 0),
       };
     }));
@@ -44,12 +44,12 @@ router.post("/playlist/create", async (req, res) => {
   const { name, userId = "default" } = body;
 
   try {
-    const [playlist] = await db.insert(playlistsTable).values({ name, userId }).returning();
+    const [playlist] = await db.insert(playlistsTable).values({ name, userId, createdAt: new Date().toISOString() }).returning();
     res.json(CreatePlaylistResponse.parse({
       id: playlist.id,
       name: playlist.name,
       userId: playlist.userId,
-      createdAt: playlist.createdAt?.toISOString(),
+      createdAt: playlist.createdAt || new Date().toISOString(),
       songCount: 0,
     }));
   } catch (err) {
@@ -125,7 +125,7 @@ router.get("/playlist/:playlistId", async (req, res) => {
         id: playlist.id,
         name: playlist.name,
         userId: playlist.userId,
-        createdAt: playlist.createdAt?.toISOString(),
+        createdAt: playlist.createdAt || new Date().toISOString(),
         songCount: songs.length,
       },
       songs,

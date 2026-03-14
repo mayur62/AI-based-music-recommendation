@@ -1,9 +1,9 @@
-import { pgTable, serial, text, integer, real, timestamp } from "drizzle-orm/pg-core";
+import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
-export const songsTable = pgTable("songs", {
-  id: serial("id").primaryKey(),
+export const songsTable = sqliteTable("songs", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   title: text("title").notNull(),
   artist: text("artist").notNull(),
   genre: text("genre").notNull().default("unknown"),
@@ -11,7 +11,7 @@ export const songsTable = pgTable("songs", {
   youtubeId: text("youtube_id").notNull().unique(),
   thumbnail: text("thumbnail").default(""),
   duration: integer("duration").default(0),
-  createdAt: timestamp("created_at").defaultNow(),
+  createdAt: text("created_at").default(""),
 });
 
 export const insertSongSchema = createInsertSchema(songsTable).omit({ id: true, createdAt: true });

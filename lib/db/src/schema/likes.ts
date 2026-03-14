@@ -1,12 +1,12 @@
-import { pgTable, text, integer, timestamp, primaryKey } from "drizzle-orm/pg-core";
+import { sqliteTable, text, integer, primaryKey } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 import { songsTable } from "./songs";
 
-export const likesTable = pgTable("likes", {
+export const likesTable = sqliteTable("likes", {
   userId: text("user_id").notNull().default("default"),
   songId: integer("song_id").references(() => songsTable.id).notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
+  createdAt: text("created_at").default(""),
 }, (t) => [primaryKey({ columns: [t.userId, t.songId] })]);
 
 export const insertLikeSchema = createInsertSchema(likesTable).omit({ createdAt: true });

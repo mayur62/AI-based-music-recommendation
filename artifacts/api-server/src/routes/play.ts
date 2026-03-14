@@ -36,6 +36,7 @@ router.post("/play", async (req, res) => {
       playPercentage: 0,
       playTime: 0,
       duration: duration || 0,
+      timestamp: new Date().toISOString(),
     }).returning();
 
     res.json(PlaySongResponse.parse({

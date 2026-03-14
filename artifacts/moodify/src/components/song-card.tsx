@@ -1,13 +1,19 @@
-import { Play, Heart, MoreHorizontal } from "lucide-react";
+import { Play, Heart, MoreHorizontal, ListPlus } from "lucide-react";
 import { usePlayerStore } from "@/store/player-store";
 import type { Song } from "@workspace/api-client-react";
 import { getEmotionColor, getHighResThumbnail } from "@/lib/helpers";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { AddToPlaylistDialog } from "./add-to-playlist-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export function SongCard({ song, queue = [] }: { song: Song, queue?: Song[] }) {
-  const { setSong, currentSong, isPlaying, setQueue } = usePlayerStore();
+  const { setSong, currentSong, isPlaying, setQueue, addToQueue } = usePlayerStore();
   const [showDialog, setShowDialog] = useState(false);
 
   const isCurrent = currentSong?.youtubeId === song.youtubeId;
@@ -16,6 +22,11 @@ export function SongCard({ song, queue = [] }: { song: Song, queue?: Song[] }) {
     e.stopPropagation();
     if (queue.length > 0) setQueue(queue);
     setSong(song);
+  };
+
+  const handleAddToQueue = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    addToQueue(song);
   };
 
   return (
@@ -51,12 +62,26 @@ export function SongCard({ song, queue = [] }: { song: Song, queue?: Song[] }) {
             </Badge>
           ) : <div />}
           
-          <button 
-            onClick={(e) => { e.stopPropagation(); setShowDialog(true); }}
-            className="text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity"
-          >
-            <MoreHorizontal className="w-5 h-5" />
-          </button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button 
+                onClick={(e) => e.stopPropagation()}
+                className="text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <MoreHorizontal className="w-5 h-5" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="bg-popover border-border" onClick={(e) => e.stopPropagation()}>
+              <DropdownMenuItem onClick={handleAddToQueue} className="cursor-pointer">
+                <ListPlus className="w-4 h-4 mr-2" />
+                Add to Queue
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={(e) => { e.stopPropagation(); setShowDialog(true); }} className="cursor-pointer">
+                <MoreHorizontal className="w-4 h-4 mr-2" />
+                Add to Playlist
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
